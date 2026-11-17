@@ -120,6 +120,11 @@ func (p *crossReplicaPublisher) run(ctx context.Context) {
 }
 
 func (p *crossReplicaPublisher) publishAll(ctx context.Context) {
+	for _, c := range p.contributors {
+		if preparer, ok := c.(fwkdl.CrossReplicaPreparer); ok {
+			preparer.PrepareCrossReplicaState()
+		}
+	}
 	snapshot := p.endpointSnapshot()
 	if syncer, ok := p.syncer.(fwkdl.CrossReplicaBatchSyncer); ok {
 		p.publishBatch(ctx, syncer, snapshot)
